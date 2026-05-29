@@ -1,19 +1,11 @@
-# Buduje podpisany .ipa na macOS (GitHub Actions) – do AltStore / Ad Hoc / Development.
-# Wymaga sekretów – patrz: GhostLink/docs/GITHUB_ACTIONS_PL.md
+# GHOSTLINK – jedyny build: .ipa pod AltStore (sideload).
+# Podpis przy instalacji robi AltStore / AltServer (Twoje Apple ID).
+# Nie wymaga sekretów Apple w GitHubie.
 
-name: Build IPA
+name: Build IPA for AltStore
 
 on:
   workflow_dispatch:
-    inputs:
-      export_method:
-        description: "Metoda eksportu (development = łatwiejsze z darmowym Apple ID)"
-        required: true
-        default: development
-        type: choice
-        options:
-          - development
-          - ad-hoc
   push:
     branches: [main, master]
     paths:
@@ -21,14 +13,14 @@ on:
       - ".github/workflows/build-ipa.yml"
 
 concurrency:
-  group: build-ipa-${{ github.ref }}
+  group: altstore-ipa-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build-ipa:
-    name: Build signed IPA
+    name: GhostLink.ipa (AltStore)
     runs-on: macos-14
-    timeout-minutes: 45
+    timeout-minutes: 30
 
     defaults:
       run:
@@ -38,123 +30,56 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate secrets
-        run: |
-          missing=""
-          [ -z "${{ secrets.BUILD_CERTIFICATE_BASE64 }}" ] && missing="$missing BUILD_CERTIFICATE_BASE64"
-          [ -z "${{ secrets.P12_PASSWORD }}" ] && missing="$missing P12_PASSWORD"
-          [ -z "${{ secrets.BUILD_PROVISIONING_PROFILE_BASE64 }}" ] && missing="$missing BUILD_PROVISIONING_PROFILE_BASE64"
-          [ -z "${{ secrets.KEYCHAIN_PASSWORD }}" ] && missing="$missing KEYCHAIN_PASSWORD"
-          [ -z "${{ secrets.APPLE_TEAM_ID }}" ] && missing="$missing APPLE_TEAM_ID"
-          [ -z "${{ secrets.PROVISIONING_PROFILE_NAME }}" ] && missing="$missing PROVISIONING_PROFILE_NAME"
-          if [ -n "$missing" ]; then
-            echo "::error::Brakujące sekrety w repo (Settings → Secrets → Actions):$missing"
-            echo "Instrukcja: GhostLink/docs/GITHUB_ACTIONS_PL.md"
-            exit 1
-          fi
-
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Show Xcode version
-        run: xcodebuild -version
-
-      - name: Import code signing certificate
-        env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      - name: Build for iPhone (AltStore podpisze przy instalacji)
         run: |
           set -e
-          CERT_PATH="$RUNNER_TEMP/build_certificate.p12"
-          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
-
-          echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
-
-          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-
-          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-
-      - name: Install provisioning profile
-        env:
-          BUILD_PROVISIONING_PROFILE_BASE64: ${{ secrets.BUILD_PROVISIONING_PROFILE_BASE64 }}
-        run: |
-          set -e
-          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-
-          echo "$BUILD_PROVISIONING_PROFILE_BASE64" | base64 --decode -o "$PROFILE_PATH"
-
-          UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' /dev/stdin <<< "$(security cms -D -i "$PROFILE_PATH")")
-          cp "$PROFILE_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/"$UUID.mobileprovision"
-          echo "Installed profile UUID: $UUID"
-
-      - name: Generate ExportOptions.plist
-        env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          PROVISIONING_PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
-          EXPORT_METHOD: ${{ github.event.inputs.export_method || 'development' }}
-          BUNDLE_ID: edu.lab.ghostlink
-        run: |
-          set -e
-          if [ "$EXPORT_METHOD" = "ad-hoc" ]; then
-            SIGN_IDENTITY="Apple Distribution"
-          else
-            SIGN_IDENTITY="Apple Development"
-          fi
-          echo "SIGN_IDENTITY=$SIGN_IDENTITY" >> "$GITHUB_ENV"
-
-          cp ci/ExportOptions.plist ci/ExportOptions.generated.plist
-          /usr/libexec/PlistBuddy -c "Set :method $EXPORT_METHOD" ci/ExportOptions.generated.plist
-          /usr/libexec/PlistBuddy -c "Set :teamID $APPLE_TEAM_ID" ci/ExportOptions.generated.plist
-          /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:edu.lab.ghostlink $PROVISIONING_PROFILE_NAME" ci/ExportOptions.generated.plist
-          plutil -lint ci/ExportOptions.generated.plist
-
-      - name: Archive (xcodebuild)
-        env:
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          PROVISIONING_PROFILE_NAME: ${{ secrets.PROVISIONING_PROFILE_NAME }}
-        run: |
-          set -e
+          DERIVED="$RUNNER_TEMP/DerivedData"
           xcodebuild \
             -project GhostLink.xcodeproj \
             -scheme GhostLink \
             -configuration Release \
             -destination "generic/platform=iOS" \
-            -archivePath "$RUNNER_TEMP/GhostLink.xcarchive" \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_NAME" \
-            archive
+            -derivedDataPath "$DERIVED" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="-" \
+            build
 
-      - name: Export IPA
+          APP_PATH=$(find "$DERIVED" -name "GhostLink.app" -type d | head -1)
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::Nie znaleziono GhostLink.app"
+            find "$DERIVED" -type d -name "*.app"
+            exit 1
+          fi
+          echo "APP_PATH=$APP_PATH" >> "$GITHUB_ENV"
+
+      - name: Utwórz GhostLink.ipa
         run: |
           set -e
-          xcodebuild \
-            -exportArchive \
-            -archivePath "$RUNNER_TEMP/GhostLink.xcarchive" \
-            -exportPath "$RUNNER_TEMP/ipa" \
-            -exportOptionsPlist ci/ExportOptions.generated.plist
+          STAGING="$RUNNER_TEMP/ipa_staging"
+          rm -rf "$STAGING"
+          mkdir -p "$STAGING/Payload"
+          cp -R "$APP_PATH" "$STAGING/Payload/"
+          cd "$STAGING"
+          zip -qr "$RUNNER_TEMP/GhostLink.ipa" Payload
+          ls -lh "$RUNNER_TEMP/GhostLink.ipa"
 
-          ls -la "$RUNNER_TEMP/ipa"
-          IPA_FILE=$(find "$RUNNER_TEMP/ipa" -name "*.ipa" | head -1)
-          echo "IPA_PATH=$IPA_FILE" >> "$GITHUB_ENV"
-
-      - name: Upload IPA artifact
+      - name: Upload IPA (do AltStore)
         uses: actions/upload-artifact@v4
         with:
-          name: GhostLink-${{ github.run_number }}
-          path: ${{ runner.temp }}/ipa/*.ipa
+          name: GhostLink-ipa
+          path: ${{ runner.temp }}/GhostLink.ipa
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
 
-      - name: Summary
+      - name: Instrukcja AltStore
         run: |
-          echo "### IPA gotowe" >> "$GITHUB_STEP_SUMMARY"
-          echo "Pobierz: **Actions → ten workflow → Artifacts → GhostLink-${{ github.run_number }}**" >> "$GITHUB_STEP_SUMMARY"
-          echo "Plik: \`$(basename "$IPA_PATH")\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "### GhostLink.ipa – gotowe do AltStore" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "1. **Artifacts** → pobierz \`GhostLink-ipa\` → plik \`GhostLink.ipa\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "2. Przenieś na iPhone (AirDrop, iCloud, kabel)" >> "$GITHUB_STEP_SUMMARY"
+          echo "3. **AltStore** → My Apps → **+** → wybierz \`GhostLink.ipa\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "4. Ten sam komputer co **AltServer** (Wi‑Fi), odśwież aplikacje co 7 dni" >> "$GITHUB_STEP_SUMMARY"

@@ -1,25 +1,19 @@
-# ghostapp
+# GHOSTLINK (ghostapp)
 
-Repozytorium **GHOSTLINK** – iOS (SwiftUI), build `.ipa` przez GitHub Actions.
+Aplikacja iOS **tylko pod AltStore** – sideload, bez App Store.
 
-| Folder / plik | Opis |
-|---------------|------|
-| [GhostLink/](GhostLink/) | Projekt Xcode |
-| [.github/workflows/](.github/workflows/) | CI: **Build IPA** + **Build Check** |
-| [GhostLink/docs/GITHUB_ACTIONS_PL.md](GhostLink/docs/GITHUB_ACTIONS_PL.md) | **Instrukcja IPA na GitHubie (PL)** |
+| | |
+|---|---|
+| **Login** | `revishef` / `revishef` |
+| **Instalacja** | [GhostLink/docs/ALTSTORE_PL.md](GhostLink/docs/ALTSTORE_PL.md) |
+| **Build IPA** | GitHub Actions → **Build IPA for AltStore** → Artifact `GhostLink.ipa` |
 
-## Szybki start
+## Szybko
 
-1. Ustaw [sekrety Apple w GitHub](GhostLink/docs/GITHUB_ACTIONS_PL.md#2-sekrety-w-github-settings--secrets-and-variables--actions).
-2. Wypchnij kod (PowerShell):
+1. `git push` na [github.com/Jurus2111/ghostapp](https://github.com/Jurus2111/ghostapp)
+2. **Actions** → pobierz **GhostLink.ipa**
+3. iPhone → **AltStore** → **+** → wybierz IPA
 
-```powershell
-cd "c:\Users\user\Documents\ghost"
-git add .
-git commit -m "Add GitHub Actions IPA workflows"
-git push origin main
-```
+Kod aplikacji: folder [GhostLink/](GhostLink/)
 
-3. GitHub → **Actions** → **Build IPA** → **Run workflow** → pobierz **Artifacts**.
-
-Login aplikacji: `revishef` / `revishef`
+**Nie wymaga** sekretów Apple w GitHubie – podpis przy instalacji robi AltStore (Twoje Apple ID).

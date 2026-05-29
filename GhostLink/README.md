@@ -5,22 +5,22 @@ Aplikacja iOS (SwiftUI) – środowisko laboratoryjne / edukacyjne.
 
 ## Wymagania
 
-- macOS + Xcode 14+
-- iOS 15+ (ProMotion: animacje 120 FPS przez `TimelineView`)
-- AltStore lub Apple Developer do podpisu `.ipa`
+- **iOS 15+** na iPhone
+- **AltStore** + **AltServer** (PC/Mac w tej samej sieci Wi‑Fi co telefon)
+- Opcjonalnie: Mac + Xcode 14+ (lokalny build)
 
-## Kompilacja
+## Instalacja (jedyna metoda dystrybucji: AltStore)
+
+**[docs/ALTSTORE_PL.md](docs/ALTSTORE_PL.md)** – pełna instrukcja.
+
+Skrót: GitHub Actions buduje `GhostLink.ipa` → pobierz z **Artifacts** → AltStore → **+** → wybierz plik.
+
+## Kompilacja lokalna (opcjonalnie, Mac)
 
 1. Otwórz `GhostLink.xcodeproj` w Xcode.
-2. Ustaw **Team** w Signing & Capabilities.
-3. Wygeneruj ikony (opcjonalnie na Mac/Windows z Pythonem):
+2. Podłącz iPhone, wybierz Team (Apple ID) → **Run**.
 
-```bash
-pip install pillow
-python scripts/generate_icons.py
-```
-
-4. **Product → Archive → Distribute App → Ad Hoc** → eksport `.ipa` do AltStore.
+Ikony: `python scripts/generate_icons.py` (wymaga `pip install pillow`).
 
 ## Moduły – jak działają
 
@@ -66,20 +66,11 @@ GhostLink/
   scripts/            # generator ikon
 ```
 
-## AltStore
+## GitHub → IPA
 
-1. Zbuduj `.ipa` (Ad Hoc z Twoim UDID).
-2. AltStore → Install from file / AltServer.
-3. Odśwież certyfikat co 7 dni (darmowe Apple ID) lub 1 rok (płatne).
+Jeden workflow: **Build IPA for AltStore** – bez sekretów w repo.
 
-## GitHub Actions → .ipa bez Maca
-
-Instrukcja krok po kroku (sekrety Apple, Run workflow, pobranie IPA):
-
-**[docs/GITHUB_ACTIONS_PL.md](docs/GITHUB_ACTIONS_PL.md)**
-
-- Workflow **Build IPA** – podpisany plik do AltStore (wymaga 6 sekretów).
-- Workflow **Build Check** – tylko test kompilacji (bez sekretów).
+Szczegóły: **[docs/GITHUB_ACTIONS_PL.md](docs/GITHUB_ACTIONS_PL.md)**
 
 ---
 
