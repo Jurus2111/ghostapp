@@ -1,0 +1,367 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A100000000000001 /* GhostLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000001; };
+		A100000000000002 /* GhostTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000002; };
+		A100000000000003 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000003; };
+		A100000000000004 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000004; };
+		A100000000000005 /* LogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000005; };
+		A100000000000006 /* SnifferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000006; };
+		A100000000000007 /* WiFiScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000007; };
+		A100000000000008 /* FakeAPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000008; };
+		A100000000000009 /* SMSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000009; };
+		A10000000000000A /* CredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000A; };
+		A10000000000000B /* MatrixBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000B; };
+		A10000000000000C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000C; };
+		A10000000000000D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000D; };
+		A10000000000000E /* MainShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000E; };
+		A10000000000000F /* HomePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000F; };
+		A100000000000010 /* SnifferModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000010; };
+		A100000000000011 /* DeauthModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000011; };
+		A100000000000012 /* FakeAPModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000012; };
+		A100000000000013 /* SMSBomberModuleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000013; };
+		A100000000000014 /* CredentialHarvesterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000014; };
+		A100000000000015 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000015; };
+		A100000000000016 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000016; };
+		A100000000000017 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A200000000000017; };
+		A100000000000018 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A200000000000018; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A200000000000001 /* GhostLinkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostLinkApp.swift; sourceTree = "<group>"; };
+		A200000000000002 /* GhostTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostTheme.swift; sourceTree = "<group>"; };
+		A200000000000003 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		A200000000000004 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A200000000000005 /* LogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogStore.swift; sourceTree = "<group>"; };
+		A200000000000006 /* SnifferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnifferService.swift; sourceTree = "<group>"; };
+		A200000000000007 /* WiFiScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiScannerService.swift; sourceTree = "<group>"; };
+		A200000000000008 /* FakeAPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeAPService.swift; sourceTree = "<group>"; };
+		A200000000000009 /* SMSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSService.swift; sourceTree = "<group>"; };
+		A20000000000000A /* CredentialStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialStore.swift; sourceTree = "<group>"; };
+		A20000000000000B /* MatrixBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixBackground.swift; sourceTree = "<group>"; };
+		A20000000000000C /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A20000000000000D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		A20000000000000E /* MainShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainShellView.swift; sourceTree = "<group>"; };
+		A20000000000000F /* HomePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePanelView.swift; sourceTree = "<group>"; };
+		A200000000000010 /* SnifferModuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnifferModuleView.swift; sourceTree = "<group>"; };
+		A200000000000011 /* DeauthModuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeauthModuleView.swift; sourceTree = "<group>"; };
+		A200000000000012 /* FakeAPModuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeAPModuleView.swift; sourceTree = "<group>"; };
+		A200000000000013 /* SMSBomberModuleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSBomberModuleView.swift; sourceTree = "<group>"; };
+		A200000000000014 /* CredentialHarvesterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialHarvesterView.swift; sourceTree = "<group>"; };
+		A200000000000015 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsView.swift; sourceTree = "<group>"; };
+		A200000000000016 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
+		A200000000000017 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A200000000000018 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A200000000000019 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A300000000000001 /* GhostLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GhostLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A400000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A500000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A500000000000002 /* GhostLink */,
+				A500000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A500000000000002 /* GhostLink */ = {
+			isa = PBXGroup;
+			children = (
+				A200000000000001 /* GhostLinkApp.swift */,
+				A500000000000004 /* Theme */,
+				A500000000000005 /* Models */,
+				A500000000000006 /* Services */,
+				A500000000000007 /* Components */,
+				A500000000000008 /* Views */,
+				A200000000000018 /* Assets.xcassets */,
+				A200000000000019 /* Info.plist */,
+			);
+			path = GhostLink;
+			sourceTree = "<group>";
+		};
+		A500000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A300000000000001 /* GhostLink.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A500000000000004 /* Theme */ = {
+			isa = PBXGroup;
+			children = ( A200000000000002 /* GhostTheme.swift */ );
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		A500000000000005 /* Models */ = {
+			isa = PBXGroup;
+			children = ( A200000000000003 /* Models.swift */ );
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A500000000000006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A200000000000004 /* AppState.swift */,
+				A200000000000005 /* LogStore.swift */,
+				A200000000000006 /* SnifferService.swift */,
+				A200000000000007 /* WiFiScannerService.swift */,
+				A200000000000008 /* FakeAPService.swift */,
+				A200000000000009 /* SMSService.swift */,
+				A20000000000000A /* CredentialStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A500000000000007 /* Components */ = {
+			isa = PBXGroup;
+			children = ( A20000000000000B /* MatrixBackground.swift */ );
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A500000000000008 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000C /* RootView.swift */,
+				A20000000000000D /* LoginView.swift */,
+				A20000000000000E /* MainShellView.swift */,
+				A20000000000000F /* HomePanelView.swift */,
+				A200000000000015 /* LogsView.swift */,
+				A200000000000016 /* TerminalView.swift */,
+				A200000000000017 /* SettingsView.swift */,
+				A500000000000009 /* Modules */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A500000000000009 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				A200000000000010 /* SnifferModuleView.swift */,
+				A200000000000011 /* DeauthModuleView.swift */,
+				A200000000000012 /* FakeAPModuleView.swift */,
+				A200000000000013 /* SMSBomberModuleView.swift */,
+				A200000000000014 /* CredentialHarvesterView.swift */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A600000000000001 /* GhostLink */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A800000000000003 /* Build configuration list for PBXNativeTarget "GhostLink" */;
+			buildPhases = (
+				A700000000000001 /* Sources */,
+				A400000000000001 /* Frameworks */,
+				A700000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GhostLink;
+			productName = GhostLink;
+			productReference = A300000000000001 /* GhostLink.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A900000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A600000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A800000000000001 /* Build configuration list for PBXProject "GhostLink" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A500000000000001;
+			productRefGroup = A500000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A600000000000001 /* GhostLink */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A700000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A100000000000018 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A700000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A100000000000001 /* GhostLinkApp.swift in Sources */,
+				A100000000000002 /* GhostTheme.swift in Sources */,
+				A100000000000003 /* Models.swift in Sources */,
+				A100000000000004 /* AppState.swift in Sources */,
+				A100000000000005 /* LogStore.swift in Sources */,
+				A100000000000006 /* SnifferService.swift in Sources */,
+				A100000000000007 /* WiFiScannerService.swift in Sources */,
+				A100000000000008 /* FakeAPService.swift in Sources */,
+				A100000000000009 /* SMSService.swift in Sources */,
+				A10000000000000A /* CredentialStore.swift in Sources */,
+				A10000000000000B /* MatrixBackground.swift in Sources */,
+				A10000000000000C /* RootView.swift in Sources */,
+				A10000000000000D /* LoginView.swift in Sources */,
+				A10000000000000E /* MainShellView.swift in Sources */,
+				A10000000000000F /* HomePanelView.swift in Sources */,
+				A100000000000010 /* SnifferModuleView.swift in Sources */,
+				A100000000000011 /* DeauthModuleView.swift in Sources */,
+				A100000000000012 /* FakeAPModuleView.swift in Sources */,
+				A100000000000013 /* SMSBomberModuleView.swift in Sources */,
+				A100000000000014 /* CredentialHarvesterView.swift in Sources */,
+				A100000000000015 /* LogsView.swift in Sources */,
+				A100000000000016 /* TerminalView.swift in Sources */,
+				A100000000000017 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AB00000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AB00000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AB00000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GhostLink/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.lab.ghostlink;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AB00000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GhostLink/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = edu.lab.ghostlink;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A800000000000001 /* Build configuration list for PBXProject "GhostLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB00000000000001 /* Debug */,
+				AB00000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A800000000000003 /* Build configuration list for PBXNativeTarget "GhostLink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB00000000000003 /* Debug */,
+				AB00000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A900000000000001 /* Project object */;
+}
