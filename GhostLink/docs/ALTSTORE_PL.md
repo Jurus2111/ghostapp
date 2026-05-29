@@ -68,7 +68,8 @@ Albo: **Product → Archive → Distribute → Development** → `.ipa` → ten 
 |---------|-------------|
 | AltStore „Unable to install” | AltServer włączony, to samo Wi‑Fi, restart AltServer |
 | „Integrity could not be verified” | Ustawienia → Zaufaj deweloperowi |
-| GitHub Actions czerwony | Actions → logi → wyślij screenshot / issue |
+| GitHub Actions czerwony | Upewnij się, że w repo są ikony `AppIcon.appiconset/*.png` (push po `py scripts/generate_icons.py`) |
+| GitHub Actions czerwony | Actions → logi → ostatnie linie `xcodebuild` |
 | Aplikacja znika po tygodniu | Normalne – **Refresh** w AltStore |
 
 ---

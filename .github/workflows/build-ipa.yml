@@ -1,6 +1,4 @@
-# GHOSTLINK – jedyny build: .ipa pod AltStore (sideload).
-# Podpis przy instalacji robi AltStore / AltServer (Twoje Apple ID).
-# Nie wymaga sekretów Apple w GitHubie.
+# GHOSTLINK – .ipa wyłącznie pod AltStore (sideload).
 
 name: Build IPA for AltStore
 
@@ -30,6 +28,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Generate App Icons (jeśli brak PNG w repo)
+        run: |
+          ICON_DIR="GhostLink/Assets.xcassets/AppIcon.appiconset"
+          if [ ! -f "$ICON_DIR/Icon-1024.png" ]; then
+            echo "Brak ikon – generuję..."
+            python3 scripts/generate_icons.py
+          else
+            echo "Ikony OK"
+            ls -la "$ICON_DIR"/*.png
+          fi
+
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
@@ -37,6 +46,7 @@ jobs:
         run: |
           set -e
           DERIVED="$RUNNER_TEMP/DerivedData"
+          set +e
           xcodebuild \
             -project GhostLink.xcodeproj \
             -scheme GhostLink \
@@ -46,7 +56,15 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="-" \
-            build
+            build 2>&1 | tee "$RUNNER_TEMP/xcodebuild.log"
+          BUILD_EXIT=${PIPESTATUS[0]}
+          set -e
+          if [ "$BUILD_EXIT" -ne 0 ]; then
+            echo "::error::xcodebuild failed (exit $BUILD_EXIT)"
+            echo "=== Ostatnie 80 linii logu ==="
+            tail -80 "$RUNNER_TEMP/xcodebuild.log"
+            exit "$BUILD_EXIT"
+          fi
 
           APP_PATH=$(find "$DERIVED" -name "GhostLink.app" -type d | head -1)
           if [ -z "$APP_PATH" ]; then
@@ -78,8 +96,5 @@ jobs:
       - name: Instrukcja AltStore
         run: |
           echo "### GhostLink.ipa – gotowe do AltStore" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "1. **Artifacts** → pobierz \`GhostLink-ipa\` → plik \`GhostLink.ipa\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "2. Przenieś na iPhone (AirDrop, iCloud, kabel)" >> "$GITHUB_STEP_SUMMARY"
-          echo "3. **AltStore** → My Apps → **+** → wybierz \`GhostLink.ipa\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "4. Ten sam komputer co **AltServer** (Wi‑Fi), odśwież aplikacje co 7 dni" >> "$GITHUB_STEP_SUMMARY"
+          echo "1. **Artifacts** → \`GhostLink-ipa\` → \`GhostLink.ipa\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "2. AltStore → **+** → wybierz plik na iPhone" >> "$GITHUB_STEP_SUMMARY"

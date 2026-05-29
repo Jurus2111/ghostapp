@@ -43,7 +43,6 @@ struct LogsView: View {
                 }
             }
             .listStyle(.plain)
-            .scrollIndicators(.hidden)
 
             HStack(spacing: 12) {
                 Button("Wyczyść logi") { showClearConfirm = true }
