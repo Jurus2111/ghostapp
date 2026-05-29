@@ -26,42 +26,55 @@ struct CredentialHarvesterView: View {
                 Text("Zapisane dane")
                     .foregroundColor(GhostTheme.neonPinkLight)
 
-                ForEach(credentialStore.harvestedItems) { cred in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(cred.username).foregroundColor(GhostTheme.textPrimary)
-                            if revealedIDs.contains(cred.id) {
-                                Text(cred.password)
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundColor(GhostTheme.neonPink)
-                            } else {
-                                Text("••••••••")
-                                    .foregroundColor(GhostTheme.textSecondary)
-                            }
-                            Text(cred.capturedAt, style: .dateTime)
-                                .font(.caption2)
-                                .foregroundColor(GhostTheme.textSecondary)
-                        }
-                        Spacer()
-                        Button {
-                            if revealedIDs.contains(cred.id) {
-                                revealedIDs.remove(cred.id)
-                            } else {
-                                revealedIDs.insert(cred.id)
-                            }
-                        } label: {
-                            Image(systemName: revealedIDs.contains(cred.id) ? "eye.slash.fill" : "eye.fill")
-                                .foregroundColor(GhostTheme.neonPink)
-                        }
-                    }
-                    .padding()
-                    .neonBorder()
-                }
+                HarvesterItemsList(
+                    items: credentialStore.harvestedItems,
+                    revealedIDs: $revealedIDs
+                )
             }
             .padding()
             .padding(.bottom, 40)
         }
         .background(GhostTheme.background)
+    }
+}
+
+/// Osobny widok – ForEach nie może bezpośrednio brać @Published z @ObservedObject (SwiftUI wybiera Binding).
+private struct HarvesterItemsList: View {
+    let items: [HarvestedCredential]
+    @Binding var revealedIDs: Set<UUID>
+
+    var body: some View {
+        ForEach(items) { cred in
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(cred.username).foregroundColor(GhostTheme.textPrimary)
+                    if revealedIDs.contains(cred.id) {
+                        Text(cred.password)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(GhostTheme.neonPink)
+                    } else {
+                        Text("••••••••")
+                            .foregroundColor(GhostTheme.textSecondary)
+                    }
+                    Text(cred.capturedAt, style: .dateTime)
+                        .font(.caption2)
+                        .foregroundColor(GhostTheme.textSecondary)
+                }
+                Spacer()
+                Button {
+                    if revealedIDs.contains(cred.id) {
+                        revealedIDs.remove(cred.id)
+                    } else {
+                        revealedIDs.insert(cred.id)
+                    }
+                } label: {
+                    Image(systemName: revealedIDs.contains(cred.id) ? "eye.slash.fill" : "eye.fill")
+                        .foregroundColor(GhostTheme.neonPink)
+                }
+            }
+            .padding()
+            .neonBorder()
+        }
     }
 }
 

@@ -24,7 +24,7 @@ struct LogsView: View {
             .padding()
 
             List {
-                ForEach(logStore.entries) { entry in
+                ForEach(Array(logStore.entries)) { entry in
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text(entry.module)

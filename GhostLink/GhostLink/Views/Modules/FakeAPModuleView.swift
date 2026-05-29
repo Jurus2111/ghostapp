@@ -35,7 +35,7 @@ struct FakeAPModuleView: View {
                     .font(.headline)
                     .foregroundColor(GhostTheme.neonPinkLight)
 
-                ForEach(ap.connectionLogs) { log in
+                ForEach(Array(ap.connectionLogs)) { log in
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(log.deviceIP) · \(log.deviceMAC)")
                             .font(.caption.weight(.bold))

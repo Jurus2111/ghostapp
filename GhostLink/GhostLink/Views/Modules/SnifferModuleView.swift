@@ -30,7 +30,7 @@ struct SnifferModuleView: View {
                     }
                 }
 
-                ForEach(sniffer.packets) { packet in
+                ForEach(Array(sniffer.packets)) { packet in
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text(packet.type.rawValue)

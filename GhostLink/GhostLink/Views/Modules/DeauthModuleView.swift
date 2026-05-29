@@ -26,7 +26,7 @@ struct DeauthModuleView: View {
                     ProgressView().tint(GhostTheme.neonPink)
                 }
 
-                ForEach(scanner.networks) { net in
+                ForEach(Array(scanner.networks)) { net in
                     VStack(alignment: .leading, spacing: 8) {
                         Button {
                             selectedNetwork = net
