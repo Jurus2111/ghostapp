@@ -26,7 +26,7 @@ struct CredentialHarvesterView: View {
                 Text("Zapisane dane")
                     .foregroundColor(GhostTheme.neonPinkLight)
 
-                ForEach(credentialStore.credentials, id: \.id) { cred in
+                ForEach(credentialStore.harvestedItems) { cred in
                     HStack {
                         VStack(alignment: .leading) {
                             Text(cred.username).foregroundColor(GhostTheme.textPrimary)

