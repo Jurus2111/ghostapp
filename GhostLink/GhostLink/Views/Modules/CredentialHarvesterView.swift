@@ -63,7 +63,7 @@ struct CredentialHarvesterView: View {
                     Text("••••••••")
                         .foregroundColor(GhostTheme.textSecondary)
                 }
-                Text(cred.capturedAt, style: .dateTime)
+                Text(GhostTheme.formatDateTime(cred.capturedAt))
                     .font(.caption2)
                     .foregroundColor(GhostTheme.textSecondary)
             }

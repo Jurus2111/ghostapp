@@ -15,6 +15,17 @@ enum GhostTheme {
         insertion: .move(edge: .trailing).combined(with: .opacity),
         removal: .move(edge: .leading).combined(with: .opacity)
     )
+
+    private static let dateTimeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .short
+        f.timeStyle = .short
+        return f
+    }()
+
+    static func formatDateTime(_ date: Date) -> String {
+        dateTimeFormatter.string(from: date)
+    }
 }
 
 extension Color {
