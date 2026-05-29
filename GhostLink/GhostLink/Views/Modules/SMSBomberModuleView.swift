@@ -2,10 +2,12 @@ import SwiftUI
 
 struct SMSBomberModuleView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var sms = SMSService.shared
     @State private var phone = ""
     @State private var count: Double = 50
     @State private var useSimulation = true
+    @State private var isSending = false
+    @State private var sentCount = 0
+    @State private var lastError: String?
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -45,21 +47,23 @@ struct SMSBomberModuleView: View {
                     .neonBorder()
                 }
 
-                Button(sms.isSending ? "Wysyłanie… \(sms.sentCount)" : "WYBUCH") {
+                Button(isSending ? "Wysyłanie… \(sentCount)" : "WYBUCH") {
                     appState.haptic(.heavy)
-                    sms.sendBurst(
+                    SMSService.shared.sendBurst(
                         phone: phone,
                         count: Int(count),
                         apiBaseURL: appState.settings.smsAPIBaseURL,
                         useSimulation: useSimulation
                     ) { ok in
                         appState.notificationHaptic(ok ? .success : .error)
+                        syncSMS()
                     }
+                    syncSMS()
                 }
                 .buttonStyle(NeonFillButtonStyle())
-                .disabled(sms.isSending)
+                .disabled(isSending)
 
-                if let err = sms.lastError {
+                if let err = lastError {
                     Text(err).font(.caption).foregroundColor(.red)
                 }
             }
@@ -67,5 +71,14 @@ struct SMSBomberModuleView: View {
             .padding(.bottom, 40)
         }
         .background(GhostTheme.background)
+        .onReceive(SMSService.shared.$isSending) { _ in syncSMS() }
+        .onReceive(SMSService.shared.$sentCount) { _ in syncSMS() }
+        .onReceive(SMSService.shared.$lastError) { _ in syncSMS() }
+    }
+
+    private func syncSMS() {
+        isSending = SMSService.shared.isSending
+        sentCount = SMSService.shared.sentCount
+        lastError = SMSService.shared.lastError
     }
 }

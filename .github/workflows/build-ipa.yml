@@ -32,21 +32,17 @@ jobs:
         run: |
           ICON_DIR="GhostLink/Assets.xcassets/AppIcon.appiconset"
           if [ ! -f "$ICON_DIR/Icon-1024.png" ]; then
-            echo "Brak ikon – generuję..."
             python3 scripts/generate_icons.py
-          else
-            echo "Ikony OK"
-            ls -la "$ICON_DIR"/*.png
           fi
+          ls -la "$ICON_DIR"/*.png
 
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-      - name: Build for iPhone (AltStore podpisze przy instalacji)
+      - name: Build for iPhone (unsigned – AltStore podpisze)
         run: |
-          set -e
+          set -o pipefail
           DERIVED="$RUNNER_TEMP/DerivedData"
-          set +e
           xcodebuild \
             -project GhostLink.xcodeproj \
             -scheme GhostLink \
@@ -55,18 +51,22 @@ jobs:
             -derivedDataPath "$DERIVED" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="-" \
-            build 2>&1 | tee "$RUNNER_TEMP/xcodebuild.log"
-          BUILD_EXIT=${PIPESTATUS[0]}
-          set -e
-          if [ "$BUILD_EXIT" -ne 0 ]; then
-            echo "::error::xcodebuild failed (exit $BUILD_EXIT)"
-            echo "=== Ostatnie 80 linii logu ==="
-            tail -80 "$RUNNER_TEMP/xcodebuild.log"
-            exit "$BUILD_EXIT"
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            SWIFT_WHOLE_MODULE_OPTIMIZATION=NO \
+            build 2>&1 | tee "$RUNNER_TEMP/xcodebuild.log" | grep -E "error:|warning:|\*\* BUILD|BUILD FAILED" || true
+
+          if ! grep -q "\*\* BUILD SUCCEEDED \*\*" "$RUNNER_TEMP/xcodebuild.log"; then
+            echo "::error::Kompilacja nie powiodła się"
+            grep "error:" "$RUNNER_TEMP/xcodebuild.log" || true
+            tail -40 "$RUNNER_TEMP/xcodebuild.log"
+            exit 1
           fi
 
-          APP_PATH=$(find "$DERIVED" -name "GhostLink.app" -type d | head -1)
+          APP_PATH=$(find "$DERIVED" -path "*/Release-iphoneos/GhostLink.app" -type d | head -1)
+          if [ -z "$APP_PATH" ]; then
+            APP_PATH=$(find "$DERIVED" -name "GhostLink.app" -type d | head -1)
+          fi
           if [ -z "$APP_PATH" ]; then
             echo "::error::Nie znaleziono GhostLink.app"
             find "$DERIVED" -type d -name "*.app"
@@ -95,6 +95,5 @@ jobs:
 
       - name: Instrukcja AltStore
         run: |
-          echo "### GhostLink.ipa – gotowe do AltStore" >> "$GITHUB_STEP_SUMMARY"
-          echo "1. **Artifacts** → \`GhostLink-ipa\` → \`GhostLink.ipa\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "2. AltStore → **+** → wybierz plik na iPhone" >> "$GITHUB_STEP_SUMMARY"
+          echo "### GhostLink.ipa – gotowe" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifacts → **GhostLink-ipa** → zainstaluj w AltStore (+)" >> "$GITHUB_STEP_SUMMARY"

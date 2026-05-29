@@ -2,7 +2,9 @@ import SwiftUI
 
 struct FakeAPModuleView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var ap = FakeAPService.shared
+    @State private var ssid: String = "Free Starlink WiFi"
+    @State private var isRunning = false
+    @State private var connectionLogs: [APConnectionLog] = []
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -12,18 +14,23 @@ struct FakeAPModuleView: View {
                     .foregroundColor(GhostTheme.neonPink)
                     .padding(.top, 56)
 
-                TextField("Nazwa sieci", text: $ap.ssid)
+                TextField("Nazwa sieci", text: $ssid)
                     .padding()
                     .foregroundColor(GhostTheme.textPrimary)
                     .background(GhostTheme.pureBlack)
                     .neonBorder()
-                    .disabled(ap.isRunning)
+                    .disabled(isRunning)
+                    .onChange(of: ssid) { newValue in
+                        FakeAPService.shared.ssid = newValue
+                    }
 
                 Toggle(isOn: Binding(
-                    get: { ap.isRunning },
+                    get: { isRunning },
                     set: { on in
                         appState.haptic()
-                        if on { ap.start() } else { ap.stop() }
+                        FakeAPService.shared.ssid = ssid
+                        if on { FakeAPService.shared.start() } else { FakeAPService.shared.stop() }
+                        syncState()
                     }
                 )) {
                     Text("Start AP")
@@ -35,7 +42,8 @@ struct FakeAPModuleView: View {
                     .font(.headline)
                     .foregroundColor(GhostTheme.neonPinkLight)
 
-                ForEach(Array(ap.connectionLogs)) { log in
+                ForEach(connectionLogs.indices, id: \.self) { index in
+                    let log = connectionLogs[index]
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(log.deviceIP) · \(log.deviceMAC)")
                             .font(.caption.weight(.bold))
@@ -55,5 +63,14 @@ struct FakeAPModuleView: View {
             .padding(.bottom, 40)
         }
         .background(GhostTheme.background)
+        .onAppear(perform: syncState)
+        .onReceive(FakeAPService.shared.$connectionLogs) { _ in syncState() }
+        .onReceive(FakeAPService.shared.$isRunning) { _ in syncState() }
+    }
+
+    private func syncState() {
+        ssid = FakeAPService.shared.ssid
+        isRunning = FakeAPService.shared.isRunning
+        connectionLogs = FakeAPService.shared.connectionLogs
     }
 }

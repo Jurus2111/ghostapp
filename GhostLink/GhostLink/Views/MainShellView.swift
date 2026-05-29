@@ -3,6 +3,13 @@ import SwiftUI
 struct MainShellView: View {
     @EnvironmentObject var appState: AppState
 
+    private var modulePresented: Binding<Bool> {
+        Binding(
+            get: { appState.activeModule != nil },
+            set: { if !$0 { appState.activeModule = nil } }
+        )
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             GhostTheme.background.ignoresSafeArea()
@@ -28,8 +35,10 @@ struct MainShellView: View {
             }
         }
         .animation(appState.settings.animationsEnabled ? GhostTheme.spring : nil, value: appState.selectedTab)
-        .fullScreenCover(item: $appState.activeModule) { module in
-            ModuleDetailContainer(module: module)
+        .fullScreenCover(isPresented: modulePresented) {
+            if let module = appState.activeModule {
+                ModuleDetailContainer(module: module)
+            }
         }
     }
 }

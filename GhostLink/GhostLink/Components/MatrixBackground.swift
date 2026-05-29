@@ -80,9 +80,6 @@ struct WaveButtonStyle: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .animation(appState.settings.animationsEnabled ? GhostTheme.springFast : nil, value: configuration.isPressed)
-            .onChange(of: configuration.isPressed) { pressed in
-                if pressed { appState.haptic(.light) }
-            }
     }
 }
 

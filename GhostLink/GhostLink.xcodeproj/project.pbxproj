@@ -287,7 +287,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_WHOLE_MODULE_OPTIMIZATION = NO;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

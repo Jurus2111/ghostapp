@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LogsView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var logStore = LogStore.shared
+    @State private var entries: [LogEntry] = []
     @State private var showClearConfirm = false
     @State private var showShare = false
     @State private var exportURL: URL?
@@ -24,7 +24,8 @@ struct LogsView: View {
             .padding()
 
             List {
-                ForEach(Array(logStore.entries)) { entry in
+                ForEach(entries.indices, id: \.self) { index in
+                    let entry = entries[index]
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             Text(entry.module)
@@ -48,7 +49,7 @@ struct LogsView: View {
                 Button("Wyczyść logi") { showClearConfirm = true }
                     .foregroundColor(.red)
                 Button("Eksport CSV") {
-                    exportURL = logStore.exportCSV()
+                    exportURL = LogStore.shared.exportCSV()
                     showShare = true
                 }
                 .foregroundColor(GhostTheme.neonPink)
@@ -57,10 +58,13 @@ struct LogsView: View {
             .padding(.bottom, 70)
         }
         .background(GhostTheme.background)
+        .onAppear(perform: syncEntries)
+        .onReceive(LogStore.shared.$entries) { _ in syncEntries() }
         .alert("Wyczyścić wszystkie logi?", isPresented: $showClearConfirm) {
             Button("Anuluj", role: .cancel) {}
             Button("Wyczyść", role: .destructive) {
-                logStore.clear()
+                LogStore.shared.clear()
+                syncEntries()
                 appState.haptic()
             }
         }
@@ -69,5 +73,9 @@ struct LogsView: View {
                 ShareSheet(items: [url])
             }
         }
+    }
+
+    private func syncEntries() {
+        entries = LogStore.shared.entries
     }
 }
