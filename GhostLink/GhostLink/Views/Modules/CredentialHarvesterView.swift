@@ -3,7 +3,7 @@ import WebKit
 
 struct CredentialHarvesterView: View {
     @EnvironmentObject var appState: AppState
-    @ObservedObject private var store = CredentialStore.shared
+    @ObservedObject private var credentialStore = CredentialStore.shared
     @State private var showHarvester = false
     @State private var revealedIDs: Set<UUID> = []
 
@@ -26,13 +26,13 @@ struct CredentialHarvesterView: View {
                 Text("Zapisane dane")
                     .foregroundColor(GhostTheme.neonPinkLight)
 
-                ForEach(store.credentials) { cred in
+                ForEach(credentialStore.credentials, id: \.id) { cred in
                     HStack {
                         VStack(alignment: .leading) {
                             Text(cred.username).foregroundColor(GhostTheme.textPrimary)
                             if revealedIDs.contains(cred.id) {
                                 Text(cred.password)
-                                    .font(.caption.monospaced())
+                                    .font(.system(.caption, design: .monospaced))
                                     .foregroundColor(GhostTheme.neonPink)
                             } else {
                                 Text("••••••••")
